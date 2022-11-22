@@ -80,7 +80,7 @@ func HandleInputHarga(db *gorm.DB, msg []byte) error {
 	harga := models.Harga{
 		ReffId:       reffID,
 		AdminId:      message.AdminId,
-		HargaTopup:   message.HargaBuyback,
+		HargaTopup:   message.HargaTopup,
 		HargaBuyback: message.HargaBuyback,
 	}
 
