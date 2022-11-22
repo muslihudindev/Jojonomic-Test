@@ -42,7 +42,7 @@ func main() {
 func HandleCheckHarga(db *gorm.DB) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		harga := models.Harga{}
-		err := db.Last(&harga).Error
+		err := db.Order("date DESC").First(&harga).Error
 		if err != nil {
 			utils.RespondError(w, http.StatusBadRequest, models.ResponseData{
 				Error: true,
