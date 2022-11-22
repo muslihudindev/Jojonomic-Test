@@ -84,6 +84,7 @@ func HandleInputHarga(db *gorm.DB, msg []byte) error {
 		HargaBuyback: message.HargaBuyback,
 	}
 
+	fmt.Println("saved harga : ", harga)
 	err = db.Create(&harga).Error
 	if err != nil {
 		return err
