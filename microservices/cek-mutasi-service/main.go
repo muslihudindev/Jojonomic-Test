@@ -52,7 +52,7 @@ func HandleMutasi(db *gorm.DB) func(w http.ResponseWriter, r *http.Request) {
 		}
 
 		transaksi := []models.Transaksi{}
-		err := db.Where("norek = ? AND date => ? AND date <= ?", req.Norek, req.StartDate, req.EndDate).Find(&transaksi).Error
+		err := db.Where("norek = ? AND date >= ? AND date <= ?", req.Norek, req.StartDate, req.EndDate).Find(&transaksi).Error
 		if err != nil {
 			utils.RespondError(w, http.StatusBadRequest, models.ResponseData{
 				Error:   true,

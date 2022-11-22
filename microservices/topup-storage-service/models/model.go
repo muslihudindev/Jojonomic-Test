@@ -3,9 +3,9 @@ package models
 const TopUp = `topup`
 
 type Message struct {
-	Gram  string `json:"gram"`
-	Harga string `json:"harga"`
-	Norek string `json:"norek"`
+	Gram  float64 `json:"gram"`
+	Harga float64 `json:"harga"`
+	Norek string  `json:"norek"`
 }
 
 type Transaksi struct {

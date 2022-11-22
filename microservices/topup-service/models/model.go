@@ -7,7 +7,7 @@ type ResponseData struct {
 }
 
 type Params struct {
-	Gram  string `json:"gram"`
-	Saldo string `json:"saldo"`
-	Norek string `json:"norek"`
+	Gram  float64 `json:"gram"`
+	Harga float64 `json:"harga"`
+	Norek string  `json:"norek"`
 }

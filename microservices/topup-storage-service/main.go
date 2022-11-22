@@ -3,10 +3,10 @@ package main
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"log"
 	"os"
-	"strconv"
 	"strings"
 	"topup-storage-service/models"
 
@@ -74,9 +74,9 @@ func HandleInputHarga(db *gorm.DB, msg []byte) error {
 	}
 
 	var count int64 = 0
-	db.Where("harga_topup = ?", message.Harga).Find(&models.Transaksi{}).Count(&count)
-	if count == 0 {
-		return err
+	db.Where("harga_topup = ? AND norek = ?", message.Harga, message.Norek).Find(&models.Transaksi{}).Count(&count)
+	if count > 0 {
+		return errors.New("already exist")
 	}
 
 	reffID, err := shortid.Generate()
@@ -92,8 +92,8 @@ func HandleInputHarga(db *gorm.DB, msg []byte) error {
 	db.Transaction(func(tx *gorm.DB) error {
 		transaksi := models.Transaksi{
 			ReffID:     reffID,
-			Gram:       ParseFloat(message.Gram),
-			HargaTopup: ParseFloat(message.Harga),
+			Gram:       message.Gram,
+			HargaTopup: message.Harga,
 			Norek:      message.Norek,
 			Type:       models.TopUp,
 			Saldo:      rekening.Saldo,
@@ -102,18 +102,12 @@ func HandleInputHarga(db *gorm.DB, msg []byte) error {
 			return err
 		}
 
-		rekening.Saldo = rekening.Saldo + ParseFloat(message.Gram)
-		if err := tx.Model(&models.Rekening{}).Updates(&rekening).Error; err != nil {
+		rekening.Saldo = rekening.Saldo + message.Gram
+		if err := tx.Model(&models.Rekening{}).Where("norek = ?", message.Norek).Updates(&rekening).Error; err != nil {
 			return err
 		}
 		return nil
 	})
 
 	return nil
-}
-
-func ParseFloat(s string) float64 {
-	res := 0.0
-	res, _ = strconv.ParseFloat(s, 64)
-	return res
 }

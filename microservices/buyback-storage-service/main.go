@@ -73,8 +73,8 @@ func HandleInputHarga(db *gorm.DB, msg []byte) error {
 	}
 
 	var count int64 = 0
-	db.Where("harga_topup = ?", message.Harga).Find(&models.Transaksi{}).Count(&count)
-	if count == 0 {
+	db.Where("harga_topup = ? AND norek = ?", message.Harga, message.Norek).Find(&models.Transaksi{}).Count(&count)
+	if count > 0 {
 		return err
 	}
 
@@ -102,7 +102,7 @@ func HandleInputHarga(db *gorm.DB, msg []byte) error {
 		}
 
 		rekening.Saldo = rekening.Saldo - message.Gram
-		if err := tx.Model(&models.Rekening{}).Updates(&rekening).Error; err != nil {
+		if err := tx.Model(&models.Rekening{}).Where("norek = ?", message.Norek).Updates(&rekening).Error; err != nil {
 			return err
 		}
 		return nil
